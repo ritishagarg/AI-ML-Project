@@ -1,6 +1,6 @@
 # AI-ML-Project
 
-Plant leaf disease detection with **YOLOv8**, plus an evaluation of whether **SAHI** (Slicing Aided Hyper Inference) improves detection of small / densely packed objects over the plain YOLOv8 baseline.
+Plant leaf disease detection with **YOLOv8**, comparison with **SAHI** (Slicing Aided Hyper Inference) and whether SAHI improves detection of small / densely packed objects over the plain YOLOv8 baseline.
 
 The working dataset, trained weights and all experiment outputs live in the [`YOLO/`](YOLO) folder.
 
