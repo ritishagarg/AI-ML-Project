@@ -128,7 +128,7 @@ AI-ML-Project/
 
 ## Results at a glance
 
-**SAHI performed better than plain YOLOv8 on the small-object images — the leaves in this dataset — but worse overall.** The test set is mixed: alongside photos with many small leaves it contains images where a single leaf covers most of the frame. Slicing a large leaf into tiles cuts the object across slice boundaries and strips away its surrounding context, so SAHI loses ground on those images. That drags its aggregate score below the baseline even though it is the stronger model where detection is actually hard.
+**SAHI performed better than plain YOLOv8 on the small-object images — the leaves in this dataset** The test set is mixed: alongside photos with many small leaves it contains images where a single leaf covers most of the frame. Slicing a large leaf into tiles cuts the object across slice boundaries and strips away its surrounding context, so SAHI loses ground on those images. That drags its aggregate score below the baseline even though it is the stronger model where detection is actually hard.
 
 Restricting the evaluation to the images where SAHI's F1 beat the baseline (42 images, 231 ground-truth boxes):
 
