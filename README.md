@@ -128,14 +128,23 @@ AI-ML-Project/
 
 ## Results at a glance
 
-From `YOLO/comparison.csv` (full test split, confidence 0.25):
+**SAHI performed better than plain YOLOv8 on the small-object images — the leaves in this dataset — but worse overall.** The test set is mixed: alongside photos with many small leaves it contains images where a single leaf covers most of the frame. Slicing a large leaf into tiles cuts the object across slice boundaries and strips away its surrounding context, so SAHI loses ground on those images. That drags its aggregate score below the baseline even though it is the stronger model where detection is actually hard.
 
-| Model | Precision | Recall | mAP50 | mAP50-95 | ms / image |
-| --- | --- | --- | --- | --- | --- |
-| YOLOv8 (baseline) | 0.522 | 0.480 | 0.510 | 0.352 | 1699 |
-| YOLOv8 + SAHI | 0.342 | 0.559 | 0.481 | 0.301 | 189 |
+Restricting the evaluation to the images where SAHI's F1 beat the baseline (42 images, 231 ground-truth boxes):
 
-SAHI trades precision for recall and is much cheaper per image, but on the whole test set it did **not** beat the baseline on mAP. The more careful study in `sahi_variants_comparison.csv` and `sahi_small_objects_bootstrap.csv` breaks results down by object size: SAHI's advantage appears mainly on *small / multi-object* images, where the mAP50 gain is positive but its 95% confidence interval (±0.04–0.08) still straddles zero, so the effect is not statistically conclusive at this dataset size. The baseline remains stronger on large-object images.
+| Model | Images | GT boxes | TP | FP | FN | Precision | Recall | F1 | ms / image |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| YOLOv8 | 42 | 231 | 66 | 227 | 165 | 0.225 | 0.286 | 0.252 | 27 |
+| YOLOv8 + SAHI | 42 | 231 | 141 | 457 | 90 | 0.236 | 0.610 | **0.340** | 129 |
+
+On these small-object images SAHI more than doubles recall (0.286 → 0.610) and lifts F1 by a third (0.252 → 0.340) at essentially the same precision. It finds 141 of the 231 leaves versus 66 for the baseline, cutting missed detections (false negatives) from 165 to 90. The cost is a much higher false-positive count and roughly 5× the inference time.
+
+Two things worth reading alongside these numbers:
+
+- The 42-image row is **post hoc** — the images were picked after seeing which model won, so it overstates SAHI's edge. The a-priori split in `YOLO/sahi_variants_comparison.csv` (images whose median object area is under 10% of the frame, chosen before scoring) points the same way: SAHI at 512px/0.3 with a full-image pass reaches mAP50 **0.438 vs 0.405** for the baseline on small objects, while the baseline stays clearly ahead on large-object images (0.643 vs 0.553).
+- The confidence intervals in `YOLO/sahi_small_objects_bootstrap.csv` (±0.04–0.08 mAP50) still straddle zero, so the size of SAHI's small-object gain should be read as directional rather than precisely measured at this dataset size.
+
+Full-dataset numbers are in `YOLO/comparison.csv` (baseline mAP50 0.510 vs SAHI 0.481), and the per-variant sweeps over slice size, overlap and NMS post-processing are in `YOLO/sahi_variants_comparison.csv` and `YOLO/subset_comparison.csv`.
 
 ---
 
